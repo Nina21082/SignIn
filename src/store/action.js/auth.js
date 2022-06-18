@@ -1,56 +1,64 @@
-import { SIGNUP_USER, SIGNUP_ERROR, SIGNUP_LOADING } from '../type';
-import {SIGNIN_LOADING, SIGNIN_USER, SIGNIN_ERROR} from '../type'
-import { http } from '../module/http';
+import {
+  SIGNUP_USER,
+  SIGNUP_ERROR,
+  SIGNUP_LOADING,
+  SIGNUP_INIT,
+} from "../type";
+import { SIGNIN_LOADING, SIGNIN_USER, SIGNIN_ERROR } from "../type";
+import { http } from "../module/http";
 
-
-
-export const signUp = (data) => async dispatch =>{
-
+export const signUpInitAction = { type: SIGNUP_INIT };
+export const signUpAction = (data) => async (dispatch) => {
+  try {
     dispatch({
-        type: SIGNUP_LOADING,
-        payload: ''
-    })
-    try{
-        http.post('/auth/sign-up', data)
-        console.log(data)
-        .then(res => {
-            const {token} = res.data.response
-            localStorage.setItem('token', token)
-            dispatch({
-                type:  SIGNUP_USER,
-                payload: res.data
-            })
-        })
-    }catch(error){
-        dispatch({
-            type: SIGNUP_ERROR,
-            payload: error.res
-        })
-    }
-
-}
-export const signIn = (data) => async dispatch =>{
-
+      type: SIGNUP_LOADING,
+    });
+    const { data: resp } = await http.post("/auth/sign-up", data);
+    const token = resp.response.token;
+    localStorage.setItem("token", token);
     dispatch({
-        type: SIGNIN_LOADING,
-        payload: ''
-    })
-    try{
-        http.post('/auth/sign-in', data)
-        .then(res => {
-            console.log(222, res)
-            const {token} = res.data.response;
-            localStorage.setItem('token', token)
-            dispatch({
-                type:  SIGNIN_USER,
-                payload: res.data
-            })
-        })
-    }catch(error){
-        dispatch({
-            type: SIGNIN_ERROR,
-            payload: error.response.massage
-        })
-
+      type: SIGNUP_USER,
+    });
+  } catch (error) {
+    if (error?.response?.data?.response) {
+      dispatch({
+        type: SIGNUP_ERROR,
+        payload: error.response.data.response,
+      });
+    } else if (error.message) {
+        console.log('first')
+      dispatch({
+        type: SIGNUP_ERROR,
+        payload: error.message,
+      });
+    } else {
+        console.log('first2')
+      dispatch({
+        type: SIGNUP_ERROR,
+        payload: "Unknown error",
+      });
     }
-}
+  }
+};
+export const signIn = (data) => async (dispatch) => {
+  dispatch({
+    type: SIGNIN_LOADING,
+    payload: "",
+  });
+  try {
+    http.post("/auth/sign-in", data).then((res) => {
+      console.log(222, res);
+      const { token } = res.data.response;
+      localStorage.setItem("token", token);
+      dispatch({
+        type: SIGNIN_USER,
+        payload: res.data,
+      });
+    });
+  } catch (error) {
+    dispatch({
+      type: SIGNIN_ERROR,
+      payload: error.response.massage,
+    });
+  }
+};

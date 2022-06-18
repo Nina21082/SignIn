@@ -3,7 +3,6 @@ import axios from 'axios'
  export const http = axios.create({
   baseURL: 'https://testtesttest2176.herokuapp.com/api',
   withCredentials: false,
-  timeout:1000,
   headers: {
     Accept: 'application/json',
   }
@@ -23,7 +22,7 @@ http.interceptors.request.use((config) => {
 })
 
 http.interceptors.response.use((response) => response, (error) => {
-  if (error.response.status === 401) {
+  if (error?.response?.status === 401) {
     localStorage.clear();
     window.location.href = '/'
   }

@@ -1,17 +1,19 @@
-import { SIGNUP_USER, SIGNUP_ERROR, SIGNUP_LOADING } from "../type";
+import { SIGNUP_USER, SIGNUP_ERROR, SIGNUP_LOADING, SIGNUP_INIT } from "../type";
 
 const initialState ={
     loading: false,
-    error: ''
+    error: null,
+    successMessage: null,
 }
 
-export const SignUpReducer = (state = initialState, action) => {
+export const signUpReducer = (state = initialState, action) => {
     switch(action.type){
         case SIGNUP_USER : {
             return{
                 ...state,
+                successMessage: 'User have registered successfully!',
+                loading: false,
             }
-
         }
         case SIGNUP_ERROR : {
             return{
@@ -23,8 +25,11 @@ export const SignUpReducer = (state = initialState, action) => {
         case SIGNUP_LOADING : {
             return{
                 ...state,
-                loading: action.payload
+                loading: true,
             }
+        }
+        case SIGNUP_INIT : {
+            return initialState
         }
         
         default: return state

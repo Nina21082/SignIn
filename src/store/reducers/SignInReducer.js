@@ -2,10 +2,10 @@ import { SIGNIN_LOADING, SIGNIN_USER, SIGNIN_ERROR } from "../type";
 
 const initialState ={
     loading: false,
-    error: ''
+    error: null
 }
 
-export const SignInReducer = (state = initialState, action) => {
+export const signInReducer = (state = initialState, action) => {
     switch(action.type){
         case SIGNIN_USER : {
             return{
