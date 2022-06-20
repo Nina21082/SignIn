@@ -3,10 +3,12 @@ import { useDispatch } from "react-redux";
 import { Link} from "react-router-dom";
 import { signIn } from "./store/action.js/auth";
 import { useSelector } from "react-redux";
+import { Toast } from "react-bootstrap";
+import { signInInitAction } from "./store/action.js/auth";
 
 export function LogIn(){
   const dispatch = useDispatch()
-  const error = useSelector(state => state.error)
+  const error = useSelector(state => state.signInReducer.error)
 
   const [formData, setFormData] = useState({
     username: '',
@@ -19,6 +21,7 @@ export function LogIn(){
       setFormData({username: '',
                   password: ''})
 
+
   }
   const handleChange = (name, value) => {
     setFormData({...formData, [name]: value})
@@ -26,6 +29,14 @@ export function LogIn(){
   }
     return(
         <section class="vh-100">
+                <Toast bg="danger"  onClose={() => dispatch(signInInitAction)} show={error === null ? false : true} delay={3000} autohide>
+        <Toast.Header>
+          <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
+          <strong className="me-auto">Bootstrap</strong>
+          <small>11 mins ago</small>
+        </Toast.Header>
+        <Toast.Body>{error}</Toast.Body>
+      </Toast>
   <div className="container-fluid h-custom">
     <div className="row d-flex justify-content-center align-items-center h-100">
       <div className="col-md-9 col-lg-6 col-xl-5">
@@ -52,12 +63,11 @@ export function LogIn(){
               </label>
             </div>
           </div>
-
           <div class="text-center text-lg-start mt-4 pt-2">
             <button type="submit" className="btn btn-primary btn-lg"
               >Login</button>
-            <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link href="#!"
-                className="link-danger" to={'/signup'}>Register</Link></p>
+            <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account?  
+            <Link href="#!" className="link-danger" to={'/signup'}>Register</Link></p>
           </div>
 
         </form>

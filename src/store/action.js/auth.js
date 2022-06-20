@@ -3,15 +3,20 @@ import {
   SIGNUP_ERROR,
   SIGNUP_LOADING,
   SIGNUP_INIT,
+  SIGNIN_LOADING,
+  SIGNIN_USER,
+  SIGNIN_ERROR,
+  SIGNIN_INIT
 } from "../type";
-import { SIGNIN_LOADING, SIGNIN_USER, SIGNIN_ERROR } from "../type";
 import { http } from "../module/http";
 
 export const signUpInitAction = { type: SIGNUP_INIT };
+export const signInInitAction = { type: SIGNIN_INIT };
 export const signUpAction = (data) => async (dispatch) => {
   try {
     dispatch({
       type: SIGNUP_LOADING,
+      payload: true
     });
     const { data: resp } = await http.post("/auth/sign-up", data);
     const token = resp.response.token;
@@ -20,12 +25,14 @@ export const signUpAction = (data) => async (dispatch) => {
       type: SIGNUP_USER,
     });
   } catch (error) {
+    console.log(error)
     if (error?.response?.data?.response) {
       dispatch({
         type: SIGNUP_ERROR,
         payload: error.response.data.response,
       });
-    } else if (error.message) {
+    } else if (error.message){
+      console.log(error.message)
         console.log('first')
       dispatch({
         type: SIGNUP_ERROR,
@@ -43,22 +50,36 @@ export const signUpAction = (data) => async (dispatch) => {
 export const signIn = (data) => async (dispatch) => {
   dispatch({
     type: SIGNIN_LOADING,
-    payload: "",
+    payload: true
   });
-  try {
-    http.post("/auth/sign-in", data).then((res) => {
-      console.log(222, res);
-      const { token } = res.data.response;
+  try{
+    const {data: resp} = await http.post("/auth/sign-in", data)
+      console.log(222, resp);
+      const token  = resp.response.token;
       localStorage.setItem("token", token);
       dispatch({
         type: SIGNIN_USER,
-        payload: res.data,
+        payload: resp.data,
       });
+  } 
+  catch (error) {
+    console.log(error);
+    if(error?.response?.data?.response){
+      dispatch({
+        type: SIGNIN_ERROR,
+        payload: error.response.data.response,
     });
-  } catch (error) {
-    dispatch({
-      type: SIGNIN_ERROR,
-      payload: error.response.massage,
-    });
+    }else if(error.message){
+      console.log(error.message)
+      dispatch({
+        type: SIGNIN_ERROR,
+        payload: error.message
+      });
+    }else {
+      dispatch({
+        type: SIGNIN_ERROR,
+        payload: 'Unknown error'
+      })
+    }
   }
-};
+}; 

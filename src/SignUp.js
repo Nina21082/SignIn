@@ -2,30 +2,35 @@ import { Button, Toast } from "react-bootstrap";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signUpAction, signUpInitAction } from "./store/action.js/auth";
+import { useNavigate } from "react-router-dom";
 
 export function SignUp() {
   const dispatch = useDispatch();
   const error = useSelector((state) => state.signUpReducer.error);
   const successMessage = useSelector((state) => state.signUpReducer.successMessage);
   const loading = useSelector((state) => state.signUpReducer.loading);
-
-
+  let navigate = useNavigate()
+  
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     repeatPass: "",
   });
+  const [disable, setDisable] = useState(false)
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password === formData.repeatPass) {
+    if (formData.password === formData.repeatPass || {successMessage}) {
       dispatch(
         signUpAction({ username: formData.username, password: formData.repeatPass })
-      );
-    }
+        );
+        setDisable(!disable)
+
+      }
   };
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
+  
   return (
     <section className="vh-100">
       <Toast bg="danger"  onClose={() => dispatch(signUpInitAction)}  show={error === null ? false : true} delay={3000} autohide>
@@ -54,7 +59,7 @@ export function SignUp() {
                     <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">
                       Sign up
                     </p>
-                    <form
+                    <form 
                       className="mx-1 mx-md-4"
                       onSubmit={(e) => {
                         handleSubmit(e);
@@ -110,7 +115,7 @@ export function SignUp() {
                       </div>
                       <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                         {/* <button type="submit" className="btn btn-primary btn-lg">Register</button> */}
-                        <Button type="submit" variant="warning">
+                        <Button type="submit" variant="warning" disabled={disable}>
                           Register
                         </Button>
                       </div>

@@ -25,7 +25,7 @@ export const signUpReducer = (state = initialState, action) => {
         case SIGNUP_LOADING : {
             return{
                 ...state,
-                loading: true,
+                loading: action.payload,
             }
         }
         case SIGNUP_INIT : {
