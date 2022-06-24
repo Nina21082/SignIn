@@ -1,5 +1,5 @@
 import { Button, Toast } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signUpAction, signUpInitAction } from "./store/action.js/auth";
 import { useNavigate } from "react-router-dom";
@@ -8,38 +8,38 @@ export function SignUp() {
   const dispatch = useDispatch();
   const error = useSelector((state) => state.signUpReducer.error);
   const successMessage = useSelector((state) => state.signUpReducer.successMessage);
-  const loading = useSelector((state) => state.signUpReducer.loading);
+  const openProfile = useSelector((state) => state.signUpReducer.openProfile)
+  const loading = useSelector((state) => state.signUpReducer.loading)
   let navigate = useNavigate()
-  
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     repeatPass: "",
   });
-  const [disable, setDisable] = useState(false)
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password === formData.repeatPass || {successMessage}) {
+    if (formData.password === formData.repeatPass){
       dispatch(
-        signUpAction({ username: formData.username, password: formData.repeatPass })
+        signUpAction({ username:formData.username, password: formData.repeatPass})
         );
-        setDisable(!disable)
-
       }
   };
+  useEffect(()=>{
+    if(openProfile) {
+      navigate("/profile")
+    }
+  }, [openProfile]);
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
-  
   return (
     <section className="vh-100">
-      <Toast bg="danger"  onClose={() => dispatch(signUpInitAction)}  show={error === null ? false : true} delay={3000} autohide>
+              <Toast bg="danger"  onClose={() => dispatch(signUpInitAction)}  show={error === null ? false : true} delay={3000} autohide>
         <Toast.Header>
           <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-          <strong className="me-auto">Bootstrap</strong>
-          <small>11 mins ago</small>
         </Toast.Header>
         <Toast.Body>{error}</Toast.Body>
+
       </Toast>
       <Toast bg="success"  onClose={() => dispatch(signUpInitAction)}  show={successMessage === null ? false : true} delay={3000} autohide>
         <Toast.Header>
@@ -114,8 +114,7 @@ export function SignUp() {
                         </div>
                       </div>
                       <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                        {/* <button type="submit" className="btn btn-primary btn-lg">Register</button> */}
-                        <Button type="submit" variant="warning" disabled={disable}>
+                        <Button type="submit" variant="warning" disabled={loading}>
                           Register
                         </Button>
                       </div>

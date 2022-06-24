@@ -6,10 +6,10 @@ import {
   SIGNIN_LOADING,
   SIGNIN_USER,
   SIGNIN_ERROR,
-  SIGNIN_INIT
+  SIGNIN_INIT,
+  OPEN_PROFILE
 } from "../type";
 import { http } from "../module/http";
-
 export const signUpInitAction = { type: SIGNUP_INIT };
 export const signInInitAction = { type: SIGNIN_INIT };
 export const signUpAction = (data) => async (dispatch) => {
@@ -24,6 +24,11 @@ export const signUpAction = (data) => async (dispatch) => {
     dispatch({
       type: SIGNUP_USER,
     });
+    dispatch({
+      type: OPEN_PROFILE,
+      payload: resp.response.openProfile
+    });
+
   } catch (error) {
     console.log(error)
     if (error?.response?.data?.response) {
@@ -47,7 +52,7 @@ export const signUpAction = (data) => async (dispatch) => {
     }
   }
 };
-export const signIn = (data) => async (dispatch) => {
+export const signInAction = (data) => async (dispatch) => {
   dispatch({
     type: SIGNIN_LOADING,
     payload: true
@@ -62,15 +67,17 @@ export const signIn = (data) => async (dispatch) => {
         payload: resp.data,
       });
   } 
-  catch (error) {
+  catch (error){
     console.log(error);
-    if(error?.response?.data?.response){
+    if(error?.response?.data?.message){
+      console.log(error.response.data.message)
+
       dispatch({
         type: SIGNIN_ERROR,
-        payload: error.response.data.response,
+        payload: error.response.data.message,
     });
     }else if(error.message){
-      console.log(error.message)
+      console.log('first')
       dispatch({
         type: SIGNIN_ERROR,
         payload: error.message
@@ -82,4 +89,4 @@ export const signIn = (data) => async (dispatch) => {
       })
     }
   }
-}; 
+};

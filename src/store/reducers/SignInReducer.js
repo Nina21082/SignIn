@@ -1,7 +1,7 @@
 import { SIGNIN_LOADING, SIGNIN_USER, SIGNIN_ERROR, SIGNIN_INIT } from "../type";
 const initialState ={
     loading: false,
-    error: null
+    error: null,
 }
 export const signInReducer = (state = initialState, action) => {
     switch(action.type){

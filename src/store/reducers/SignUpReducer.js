@@ -1,12 +1,15 @@
-import { SIGNUP_USER, SIGNUP_ERROR, SIGNUP_LOADING, SIGNUP_INIT } from "../type";
+import { SIGNUP_USER, SIGNUP_ERROR, SIGNUP_LOADING, SIGNUP_INIT,OPEN_PROFILE } from "../type";
 
 const initialState ={
     loading: false,
     error: null,
     successMessage: null,
+    openProfile: false,
+    
 }
 
 export const signUpReducer = (state = initialState, action) => {
+    console.log(action.type);
     switch(action.type){
         case SIGNUP_USER : {
             return{
@@ -31,8 +34,17 @@ export const signUpReducer = (state = initialState, action) => {
         case SIGNUP_INIT : {
             return initialState
         }
+        case OPEN_PROFILE: {
+
+            console.log(44);
+            return{
+                ...state,
+                openProfile: action.payload
+            }
+            
+        }
         
         default: return state
     }
-
+    
 }

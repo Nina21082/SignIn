@@ -1,39 +1,39 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link} from "react-router-dom";
-import { signIn } from "./store/action.js/auth";
+import { Link, useNavigate} from "react-router-dom";
+import { signInAction } from "./store/action.js/auth";
 import { useSelector } from "react-redux";
-import { Toast } from "react-bootstrap";
+import { Button, Toast } from "react-bootstrap";
 import { signInInitAction } from "./store/action.js/auth";
 
 export function LogIn(){
   const dispatch = useDispatch()
   const error = useSelector(state => state.signInReducer.error)
+  const loading = useSelector(state => state.signInReducer.loading)
+  const openProfile = useSelector(state => state.signInReducer.openProfile)
+  let navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   })
-
   const handleSubmit = (e) => {
     e.preventDefault();
-      dispatch(signIn(formData))
+      dispatch(signInAction(formData))
       setFormData({username: '',
-                  password: ''})
-
-
+                  password: ''})       
+        if(openProfile){
+          navigate("/profile")
+         }
   }
   const handleChange = (name, value) => {
     setFormData({...formData, [name]: value})
-
   }
     return(
         <section class="vh-100">
                 <Toast bg="danger"  onClose={() => dispatch(signInInitAction)} show={error === null ? false : true} delay={3000} autohide>
         <Toast.Header>
           <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-          <strong className="me-auto">Bootstrap</strong>
-          <small>11 mins ago</small>
         </Toast.Header>
         <Toast.Body>{error}</Toast.Body>
       </Toast>
@@ -64,18 +64,15 @@ export function LogIn(){
             </div>
           </div>
           <div class="text-center text-lg-start mt-4 pt-2">
-            <button type="submit" className="btn btn-primary btn-lg"
-              >Login</button>
+          <Button variant="primary" disabled={loading} type="submit">Login</Button>
             <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account?  
             <Link href="#!" className="link-danger" to={'/signup'}>Register</Link></p>
           </div>
-
         </form>
       </div>
     </div>
   </div>
-  <div
-    class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+  <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
   </div>
 </section>
     )
